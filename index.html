@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Extrator de Prontuário</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    .btn-bookmarklet {
+      display: inline-block;
+      padding: 15px 25px;
+      background: #0066cc;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <h2>Extrator de Prontuários (Modo Anônimo)</h2>
+  <p>Arraste o botão abaixo e solte em cima da aba do AGHU:</p>
+  
+  <a class="btn-bookmarklet" href="javascript:(async function(){while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1000));const seletores=['img[id^=relatorioAnamneseEvolucaoInternacaoNew_]','img[class*=pdfviewer-img]','img[src*=ln=primefaces][src*=pdf_page]'];const imgs=Array.from(document.querySelectorAll(seletores.join(',')));if(imgs.length===0){alert('Nenhum relatório encontrado.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();">
+    🚀 Baixar Prontuário
+  </a>
+</body>
+</html>

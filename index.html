@@ -131,9 +131,10 @@
 
   <script>
     function copiarScript() {
-      const scriptCode = "javascript:(async function(){while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1000));const seletores=['img[id*=\"relatorio\"]','img[class*=\"pdfviewer-img\"]','img[src*=\"ln=primefaces\"][src*=\"pdf_page\"]'];const imgs=Array.from(document.querySelectorAll(seletores.join(',')));if(imgs.length===0){alert('Nenhum relatório encontrado na tela.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();";
+      const scriptCode = "javascript:(async function(){function b(s){let r=Array.from(document.querySelectorAll(s));document.querySelectorAll('iframe').forEach(f=>{try{const d=f.contentDocument||f.contentWindow.document;if(d)r=r.concat(Array.from(d.querySelectorAll(s)));}catch(e){}});return r;}const c=b('#viewerContainer');if(c.length>0){const cnt=c[0];while(cnt.scrollTop+cnt.clientHeight<cnt.scrollHeight-20){cnt.scrollTop+=600;await new Promise(r=>setTimeout(r,100));}cnt.scrollTop=cnt.scrollHeight;await new Promise(r=>setTimeout(r,1000));}else{while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}}const imgs=b('img').filter(i=>(i.id&&i.id.includes('relatorio'))||(i.className&&i.className.includes('pdfviewer'))||(i.src&&i.src.includes('pdf_page')));if(imgs.length===0){alert('Nenhum relatório encontrado na tela.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();";
+      
       navigator.clipboard.writeText(scriptCode);
-      alert('Código copiado com sucesso!');
+      alert('Código copiado com sucesso! Agora vá à aba do prontuário, digite "javascript:" na barra de endereços e cole o código.');
     }
 
     const dropZone = document.getElementById('dropZone');

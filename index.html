@@ -4,90 +4,119 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baixador de Prontuários Inconvenientes</title>
+  
+  <!-- FAVICON DO SITE -->
+  <link rel="icon" type="image/png" href="logo.png">
+
   <!-- Biblioteca para gerar PDF no navegador -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 650px;
+      max-width: 680px;
       margin: 40px auto;
       padding: 20px;
-      color: #333;
-      background-color: #f8f9fa;
+      color: #e0e0e0;
+      background-color: #121212;
     }
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
     .header h1 {
-      color: #1a73e8;
+      color: #8ab4f8;
       font-size: 26px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
+    .header p {
+      color: #9aa0a6;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* Aviso "Confidencial / Segredo" */
+    .secret-box {
+      background: #2d1f10;
+      border: 1px solid #e67e22;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      color: #f39c12;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .secret-box strong {
+      color: #d35400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     .card {
-      background: white;
+      background: #1e1e1e;
       padding: 24px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      border: 1px solid #2d2d2d;
       margin-bottom: 24px;
     }
-    h2 { margin-top: 0; color: #333; font-size: 18px; }
-    p, li { line-height: 1.5; color: #5f6368; font-size: 14px; }
-    ol { padding-left: 20px; }
+    h2 { margin-top: 0; color: #ffffff; font-size: 18px; }
+    p, li { line-height: 1.5; color: #bdc1c6; font-size: 14px; }
+    ul { padding-left: 20px; }
     
     .btn-container {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin: 15px 0;
+      margin: 18px 0;
     }
-
-    .btn-copy {
-      padding: 12px 20px;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-copy:hover { background: #1557b0; }
 
     .btn-drag {
       display: inline-block;
       padding: 12px 20px;
-      background: #7c4dff;
-      color: white !important;
+      background: #bb86fc;
+      color: #000000 !important;
       text-decoration: none;
       border-radius: 6px;
       font-weight: bold;
       font-size: 14px;
       cursor: move;
-      box-shadow: 0 2px 5px rgba(124,77,255,0.3);
+      box-shadow: 0 2px 8px rgba(187,134,252,0.2);
       transition: background 0.2s;
     }
-    .btn-drag:hover { background: #651fff; }
+    .btn-drag:hover { background: #9955e8; }
 
-    /* Área de Drop para o PDF */
-    .drop-zone {
-      border: 2px dashed #1a73e8;
-      border-radius: 8px;
-      padding: 30px 20px;
-      text-align: center;
-      background: #f1f8ff;
+    .btn-copy {
+      padding: 12px 20px;
+      background: #2c3e50;
+      color: #8ab4f8;
+      border: 1px solid #8ab4f8;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .drop-zone:hover, .drop-zone.dragover { background: #e1f0ff; }
+    .btn-copy:hover { background: #1a73e8; color: #ffffff; }
+
+    /* Área de Drop para o PDF */
+    .drop-zone {
+      border: 2px dashed #8ab4f8;
+      border-radius: 8px;
+      padding: 30px 20px;
+      text-align: center;
+      background: #182230;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: #8ab4f8;
+    }
+    .drop-zone:hover, .drop-zone.dragover { background: #1f2d40; }
     input[type="file"] { display: none; }
     
     button.action-btn {
       width: 100%;
       padding: 12px;
-      background: #34a853;
-      color: white;
+      background: #81c995;
+      color: #000000;
       border: none;
       border-radius: 6px;
       font-size: 16px;
@@ -95,25 +124,26 @@
       cursor: pointer;
       margin-top: 15px;
     }
-    button.action-btn:disabled { background: #ccc; cursor: not-allowed; }
+    button.action-btn:disabled { background: #3c4043; color: #70757a; cursor: not-allowed; }
     #status { margin-top: 12px; font-size: 14px; font-weight: bold; text-align: center; }
 
     footer {
       text-align: center;
       margin-top: 40px;
       padding-top: 20px;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #2d2d2d;
       color: #70757a;
       font-size: 13px;
     }
 
     .badge {
-      background: #e8f0fe;
-      color: #1a73e8;
+      background: #2d2d2d;
+      color: #8ab4f8;
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 12px;
       font-weight: bold;
+      border: 1px solid #3c4043;
     }
   </style>
 </head>
@@ -122,26 +152,30 @@
   <!-- CABEÇALHO DA PÁGINA -->
   <div class="header">
     <h1>Baixador de Prontuários Inconvenientes</h1>
-    <p>Extraia e unifique relatórios hospitalares em poucas etapas.</p>
+    <p>Extraia e unifique relatórios hospitalares para estudos de caso.</p>
+  </div>
+
+  <!-- AVISO DE USO INTERNO -->
+  <div class="secret-box">
+    🤫 <strong>Uso Acadêmico & Restrito:</strong> Esta ferramenta foi desenvolvida para ajudar residentes na consolidação de estudos de caso. Compartilhe apenas com pessoas de confiança da equipe. Mantenha o sigilo dos dados dos pacientes.
   </div>
 
   <!-- PASSO 1: MÉTODOS DE EXTRAÇÃO -->
   <div class="card">
     <h2>Passo 1: Baixar as Páginas do Prontuário</h2>
-    <p>Escolha o método mais fácil para o seu computador:</p>
+    <p>Escolha o método de extração:</p>
 
     <div class="btn-container">
-      <button class="btn-copy" onclick="copiarScript()">📋 Opção A: Copiar Código</button>
-      
-      <a class="btn-drag" id="bookmarkletLink" href="">🚀 Opção B: Arraste-me</a>
+      <a class="btn-drag" id="bookmarkletLink" href="">🚀 Opção A: Arraste para os Favoritos</a>
+      <button class="btn-copy" onclick="copiarScript()">📋 Opção B: Copiar Script</button>
     </div>
 
-    <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
+    <hr style="border: none; border-top: 1px solid #2d2d2d; margin: 15px 0;">
 
-    <p><strong>Como usar cada opção:</strong></p>
+    <p><strong>Instruções de Uso:</strong></p>
     <ul>
-      <li><strong>Opção A (Copiar):</strong> Clique em copiar. Vá até a aba do AGHU, digite <span class="badge">javascript:</span> na barra de endereço, cole o código e aperte <strong>Enter</strong>.</li>
-      <li><strong>Opção B (Arrastar):</strong> Arraste o botão roxo <span class="badge">🚀 Opção B</span> e solte-o na sua <strong>Barra de Favoritos</strong> do navegador (Ctrl+Shift+B). Depois, basta clicar nesse favorito estando na página do prontuário!</li>
+      <li><strong>Opção A (Recomendada):</strong> Arraste o botão lilás <span class="badge">🚀 Opção A</span> e solte na sua <strong>Barra de Favoritos</strong> do navegador (<kbd>Ctrl+Shift+B</kbd>). Aberto o prontuário no AGHU, basta clicar nesse favorito!</li>
+      <li><strong>Opção B (Alternativa):</strong> Clique no botão de copiar. Na aba do prontuário, digite <span class="badge">javascript:</span> na barra de endereço, cole o código logo após e aperte <strong>Enter</strong>.</li>
     </ul>
   </div>
 
@@ -161,19 +195,19 @@
 
   <!-- RODAPÉ -->
   <footer>
-    Desenvolvido por Fgo Marvin
+    Desenvolvido por Fg0kr1t1c0
   </footer>
 
   <script>
     // Código do Extrator
     const scriptCode = "javascript:(async function(){function b(s){let r=Array.from(document.querySelectorAll(s));document.querySelectorAll('iframe').forEach(f=>{try{const d=f.contentDocument||f.contentWindow.document;if(d)r=r.concat(Array.from(d.querySelectorAll(s)));}catch(e){}});return r;}const c=b('#viewerContainer');if(c.length>0){const cnt=c[0];while(cnt.scrollTop+cnt.clientHeight<cnt.scrollHeight-20){cnt.scrollTop+=600;await new Promise(r=>setTimeout(r,100));}cnt.scrollTop=cnt.scrollHeight;await new Promise(r=>setTimeout(r,1000));}else{while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}}const imgs=b('img').filter(i=>(i.id&&i.id.includes('relatorio'))||(i.className&&i.className.includes('pdfviewer'))||(i.src&&i.src.includes('pdf_page')));if(imgs.length===0){alert('Nenhum relatório encontrado na tela.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();";
 
-    // Injeta o código dinamicamente no botão de Arrastar
+    // Link do Bookmarklet para a Opção A
     document.getElementById('bookmarkletLink').href = scriptCode;
 
     function copiarScript() {
       navigator.clipboard.writeText(scriptCode);
-      alert('Código copiado com sucesso! Vá até a aba do prontuário, digite "javascript:" na barra de endereços e cole o código.');
+      alert('Código copiado com sucesso! Na aba do prontuário, digite "javascript:" na barra de endereço e cole o código.');
     }
 
     const dropZone = document.getElementById('dropZone');
@@ -211,7 +245,7 @@
         return parseInt(numA, 10) - parseInt(numB, 10);
       });
 
-      dropZone.innerHTML = `✅ <strong>${arquivosSelecionados.length} páginas selecionadas</strong> e ordenadas!`;
+      dropZone.innerHTML = `✅ <strong style="color:#81c995">${arquivosSelecionados.length} páginas selecionadas</strong> e ordenadas!`;
       btnGerarPdf.disabled = false;
       status.innerText = "";
     }
@@ -220,7 +254,7 @@
       if (arquivosSelecionados.length === 0) return;
 
       btnGerarPdf.disabled = true;
-      status.style.color = "#1a73e8";
+      status.style.color = "#8ab4f8";
       status.innerText = "⏳ Processando imagens e gerando PDF... Aguarde!";
 
       try {
@@ -251,13 +285,13 @@
         link.download = "Prontuario_Completo.pdf";
         link.click();
 
-        status.style.color = "#34a853";
+        status.style.color = "#81c995";
         status.innerText = "🎉 PDF gerado e baixado com sucesso!";
         btnGerarPdf.disabled = false;
 
       } catch (err) {
         console.error(err);
-        status.style.color = "#d93025";
+        status.style.color = "#f28b82";
         status.innerText = "❌ Erro ao converter imagens em PDF.";
         btnGerarPdf.disabled = false;
       }

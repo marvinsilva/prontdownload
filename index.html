@@ -35,8 +35,14 @@
     p, li { line-height: 1.5; color: #5f6368; font-size: 14px; }
     ol { padding-left: 20px; }
     
+    .btn-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 15px 0;
+    }
+
     .btn-copy {
-      display: inline-block;
       padding: 12px 20px;
       background: #1a73e8;
       color: white;
@@ -45,10 +51,24 @@
       font-weight: bold;
       font-size: 14px;
       cursor: pointer;
-      margin: 10px 0;
       transition: background 0.2s;
     }
     .btn-copy:hover { background: #1557b0; }
+
+    .btn-drag {
+      display: inline-block;
+      padding: 12px 20px;
+      background: #7c4dff;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: move;
+      box-shadow: 0 2px 5px rgba(124,77,255,0.3);
+      transition: background 0.2s;
+    }
+    .btn-drag:hover { background: #651fff; }
 
     /* Área de Drop para o PDF */
     .drop-zone {
@@ -86,6 +106,15 @@
       color: #70757a;
       font-size: 13px;
     }
+
+    .badge {
+      background: #e8f0fe;
+      color: #1a73e8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -96,18 +125,24 @@
     <p>Extraia e unifique relatórios hospitalares em poucas etapas.</p>
   </div>
 
-  <!-- PASSO 1: COPIAR CÓDIGO -->
+  <!-- PASSO 1: MÉTODOS DE EXTRAÇÃO -->
   <div class="card">
     <h2>Passo 1: Baixar as Páginas do Prontuário</h2>
-    <ol>
-      <li>Clique no botão abaixo para copiar o script automático:
-        <br>
-        <button class="btn-copy" onclick="copiarScript()">📋 Copiar Código Extrator</button>
-      </li>
-      <li>Abra a aba do prontuário no sistema hospitalar (AGHU).</li>
-      <li>Clique na barra de endereço, digite <strong>javascript:</strong> e cole o código logo em seguida.</li>
-      <li>Pressione <strong>Enter</strong> para iniciar o download automático de todas as páginas.</li>
-    </ol>
+    <p>Escolha o método mais fácil para o seu computador:</p>
+
+    <div class="btn-container">
+      <button class="btn-copy" onclick="copiarScript()">📋 Opção A: Copiar Código</button>
+      
+      <a class="btn-drag" id="bookmarkletLink" href="">🚀 Opção B: Arraste-me</a>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
+
+    <p><strong>Como usar cada opção:</strong></p>
+    <ul>
+      <li><strong>Opção A (Copiar):</strong> Clique em copiar. Vá até a aba do AGHU, digite <span class="badge">javascript:</span> na barra de endereço, cole o código e aperte <strong>Enter</strong>.</li>
+      <li><strong>Opção B (Arrastar):</strong> Arraste o botão roxo <span class="badge">🚀 Opção B</span> e solte-o na sua <strong>Barra de Favoritos</strong> do navegador (Ctrl+Shift+B). Depois, basta clicar nesse favorito estando na página do prontuário!</li>
+    </ul>
   </div>
 
   <!-- PASSO 2: UNIFICAR EM PDF -->
@@ -130,11 +165,15 @@
   </footer>
 
   <script>
+    // Código do Extrator
+    const scriptCode = "javascript:(async function(){function b(s){let r=Array.from(document.querySelectorAll(s));document.querySelectorAll('iframe').forEach(f=>{try{const d=f.contentDocument||f.contentWindow.document;if(d)r=r.concat(Array.from(d.querySelectorAll(s)));}catch(e){}});return r;}const c=b('#viewerContainer');if(c.length>0){const cnt=c[0];while(cnt.scrollTop+cnt.clientHeight<cnt.scrollHeight-20){cnt.scrollTop+=600;await new Promise(r=>setTimeout(r,100));}cnt.scrollTop=cnt.scrollHeight;await new Promise(r=>setTimeout(r,1000));}else{while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}}const imgs=b('img').filter(i=>(i.id&&i.id.includes('relatorio'))||(i.className&&i.className.includes('pdfviewer'))||(i.src&&i.src.includes('pdf_page')));if(imgs.length===0){alert('Nenhum relatório encontrado na tela.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();";
+
+    // Injeta o código dinamicamente no botão de Arrastar
+    document.getElementById('bookmarkletLink').href = scriptCode;
+
     function copiarScript() {
-      const scriptCode = "javascript:(async function(){function b(s){let r=Array.from(document.querySelectorAll(s));document.querySelectorAll('iframe').forEach(f=>{try{const d=f.contentDocument||f.contentWindow.document;if(d)r=r.concat(Array.from(d.querySelectorAll(s)));}catch(e){}});return r;}const c=b('#viewerContainer');if(c.length>0){const cnt=c[0];while(cnt.scrollTop+cnt.clientHeight<cnt.scrollHeight-20){cnt.scrollTop+=600;await new Promise(r=>setTimeout(r,100));}cnt.scrollTop=cnt.scrollHeight;await new Promise(r=>setTimeout(r,1000));}else{while((window.innerHeight+window.scrollY)<document.body.offsetHeight-50){window.scrollBy(0,600);await new Promise(r=>setTimeout(r,80));}}const imgs=b('img').filter(i=>(i.id&&i.id.includes('relatorio'))||(i.className&&i.className.includes('pdfviewer'))||(i.src&&i.src.includes('pdf_page')));if(imgs.length===0){alert('Nenhum relatório encontrado na tela.');return;}alert(`Baixando ${imgs.length} páginas...`);imgs.forEach((img,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=img.src;a.download=`prontuario_pg_${String(i+1).padStart(3,'0')}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a);},i*200);});})();";
-      
       navigator.clipboard.writeText(scriptCode);
-      alert('Código copiado com sucesso! Agora vá à aba do prontuário, digite "javascript:" na barra de endereços e cole o código.');
+      alert('Código copiado com sucesso! Vá até a aba do prontuário, digite "javascript:" na barra de endereços e cole o código.');
     }
 
     const dropZone = document.getElementById('dropZone');
